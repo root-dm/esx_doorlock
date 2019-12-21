@@ -1,4 +1,5 @@
 ESX = nil
+local PlayerClub, PlayerRankNum = nil, 0
 
 Citizen.CreateThread(function()
 	while ESX == nil do
@@ -18,11 +19,29 @@ Citizen.CreateThread(function()
 			Config.DoorList[doorID].locked = state
 		end
 	end)
+
+	ESX.TriggerServerCallback('sody_clubs:getPlayerClub', function(playerdata)
+		PlayerClub = playerdata.club
+		PlayerRankNum = playerdata.club_rank
+	end)
 end)
 
 RegisterNetEvent('esx:setJob')
 AddEventHandler('esx:setJob', function(job)
 	ESX.PlayerData.job = job
+end)
+
+RegisterNetEvent('sody_clubs:clubAdded')
+AddEventHandler('sody_clubs:clubAdded', function(club)
+	ESX.TriggerServerCallback('sody_clubs:getPlayerClub', function(playerdata)
+		PlayerClub = playerdata.club
+		PlayerRankNum = playerdata.club_rank
+	end)
+end)
+
+RegisterNetEvent('sody_clubs:clubRemoved')
+AddEventHandler('sody_clubs:clubRemoved', function()
+	PlayerClub, PlayerRankNum = nil, 0
 end)
 
 -- Get objects every second, instead of every frame
@@ -126,6 +145,16 @@ function IsAuthorized(doorID)
 	for _,job in pairs(doorID.authorizedJobs) do
 		if job == ESX.PlayerData.job.name then
 			return true
+		end
+	end
+
+	if doorID.authorizedClubs ~= nil then
+		if PlayerClub ~= nil and PlayerRankNum ~= nil then
+			for _,club in pairs(doorID.authorizedClubs) do
+				if club == PlayerClub and doorID.authorizedClubRank[1] <= PlayerRankNum then
+					return true
+				end
+			end
 		end
 	end
 

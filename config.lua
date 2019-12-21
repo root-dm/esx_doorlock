@@ -254,6 +254,19 @@ Config.DoorList = {
 		size = 2
 	},
 
+	-- Clubs
+	{
+		objName = 'v_ilev_lostdoor',
+		objCoords  = vector3(981.61, -102.57, 74.85),
+		textCoords = vector3(981.72, -102.82, 75.85),
+		authorizedJobs = {  },
+		authorizedClubs = { 'lmc', },
+		authorizedClubRank = { 1, },
+		locked = true,
+		distance = 12,
+		size = 2
+	},
+
 	--
 	-- Addons
 	--
